@@ -1,7 +1,7 @@
 import json
 import datetime
 
-
+# Определение класса для заметки
 class Note:
     def __init__(self, note_id, title, body):
         self.note_id = note_id
@@ -9,18 +9,13 @@ class Note:
         self.body = body
         self.create_date = datetime.datetime.now()
 
-
+# Функция для определения формата сериализации объектов с датой
 def default(obj):
     if isinstance(obj, datetime.datetime):
         return obj.isoformat()
     raise TypeError(f'Object of type {obj.__class__.__name__} is not JSON serializable')
 
-
-def save_notes(notes, file_name):
-    with open(file_name, 'w') as file:
-        json.dump([note.__dict__ for note in notes], file, default=default)
-
-
+# Загрузка списка заметок из файла JSON
 def load_notes(file_name):
     try:
         with open(file_name, 'r') as file:
@@ -29,7 +24,12 @@ def load_notes(file_name):
     except FileNotFoundError:
         return []
 
+# Сохранение списка заметок в файл JSON
+def save_notes(notes, file_name):
+    with open(file_name, 'w') as file:
+        json.dump([note.__dict__ for note in notes], file, default=default)
 
+# Добавление новой заметки с уникальным ID
 def add_note(notes, title, body):
     existing_ids = {note.note_id for note in notes}
     new_id = 1
@@ -39,7 +39,7 @@ def add_note(notes, title, body):
 
     notes.append(Note(new_id, title, body))
 
-
+# Редактирование существующей заметки по ID
 def edit_note(notes, note_id, new_title, new_body):
     for note in notes:
         if note.note_id == note_id:
@@ -48,18 +48,17 @@ def edit_note(notes, note_id, new_title, new_body):
             note.create_date = datetime.datetime.now()
             break
 
-
+# Удаление заметки по ID
 def delete_note(notes, note_id):
     notes = [note for note in notes if note.note_id != note_id]
     return notes
 
-
+# Вывод списка всех заметок
 def read_notes(notes, filter_date=None):
     for note in notes:
         print(f"ID: {note.note_id} | Title: {note.title} | Body: {note.body} | Date: {note.create_date}")
 
-
-# Просмотр определенной заметки по ID
+# Просмотр заметки по определенному ID
 def view_note_by_id(notes, note_id):
     selected_note = next((note for note in notes if note.note_id == note_id), None)
     if selected_note:
@@ -67,10 +66,10 @@ def view_note_by_id(notes, note_id):
     else:
         print("Заметка с указанным ID не найдена.")
 
-
-# Загрузка заметок из файла
+# Загрузка списка заметок из файла
 notes = load_notes('notes.json')
 
+# Главный цикл работы с заметками
 while True:
     print("Выберите действие:")
     print("1. Добавить заметку")
